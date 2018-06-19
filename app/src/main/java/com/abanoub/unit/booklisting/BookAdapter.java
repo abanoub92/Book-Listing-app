@@ -14,6 +14,7 @@ import java.util.List;
 
 public class BookAdapter extends ArrayAdapter<BooksList> {
 
+    boolean isTextClicked = false;
 
     public BookAdapter(@NonNull Context context, @NonNull List<BooksList> objects) {
         super(context, R.layout.book_item, objects);
@@ -32,7 +33,7 @@ public class BookAdapter extends ArrayAdapter<BooksList> {
         BooksList booksList = getItem(position);
 
         ImageView book_image = rootView.findViewById(R.id.book_poster);
-        book_image.setImageResource(booksList.getImageResourceID());
+        book_image.setImageBitmap(booksList.getImage());
 
         TextView book_title = rootView.findViewById(R.id.book_title);
         book_title.setText(booksList.getTitle());
@@ -40,8 +41,21 @@ public class BookAdapter extends ArrayAdapter<BooksList> {
         TextView book_author = rootView.findViewById(R.id.book_author);
         book_author.setText(booksList.getAuthor());
 
-        TextView book_desc = rootView.findViewById(R.id.book_description);
+        final TextView book_desc = rootView.findViewById(R.id.book_description);
         book_desc.setText(booksList.getDescription());
+
+        book_desc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isTextClicked){
+                    book_desc.setMaxLines(2);
+                    isTextClicked = false;
+                }else {
+                    book_desc.setMaxLines(Integer.MAX_VALUE);
+                    isTextClicked = true;
+                }
+            }
+        });
 
         TextView book_date = rootView.findViewById(R.id.book_date);
         book_date.setText(booksList.getPublishDate());

@@ -2,6 +2,7 @@ package com.abanoub.unit.booklisting;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -128,7 +129,7 @@ public class BookUtils {
                 String title = volumeInfo.getString("title");
 
                 JSONArray authors = volumeInfo.getJSONArray("authors");
-                String author = authors.getString(i);
+                String author = authors.getString(0);
 
                 String desc = volumeInfo.getString("description");
                 String date = volumeInfo.getString("publishedDate");
@@ -136,8 +137,9 @@ public class BookUtils {
                 JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
                 String imageUrl = imageLinks.getString("smallThumbnail");
                 Bitmap image = getBitmapFromUrl(imageUrl);
+                Bitmap resizedImage = getResizedBitmap(image, 160, 80);
 
-                BooksList booksList = new BooksList(image, title, author, desc, date);
+                BooksList booksList = new BooksList(resizedImage, title, author, desc, date);
 
                 listOfBooks.add(booksList);
             }
@@ -189,7 +191,7 @@ public class BookUtils {
      * Query the Books dataset
      * @return (List<BooksList>) object to represent a single book.
      */
-    public static List<BooksList> fetchDatafromInternet(String booksUrl){
+    public static List<BooksList> fetchDataFromInternet(String booksUrl){
         URL url = createUrl(booksUrl);
 
         String bookData;
@@ -203,5 +205,23 @@ public class BookUtils {
         }
 
         return list;
+    }
+
+
+    private static Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
+                matrix, false);
+
+        return resizedBitmap;
     }
 }
