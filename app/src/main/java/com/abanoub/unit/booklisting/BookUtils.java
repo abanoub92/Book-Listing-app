@@ -18,12 +18,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class BookUtils {
 
-    /** */
+    /** refer to this class in logs messages while the app is running*/
     private static final String LOG_TAG = BooksList.class.getSimpleName();
 
 
@@ -116,7 +117,7 @@ public class BookUtils {
             return null;
         }
 
-        List<BooksList> listOfBooks = new LinkedList<>();
+        List<BooksList> listOfBooks = new ArrayList<>();
 
         try {
             JSONObject root = new JSONObject(bookJSON);
@@ -129,7 +130,10 @@ public class BookUtils {
                 String title = volumeInfo.getString("title");
 
                 JSONArray authors = volumeInfo.getJSONArray("authors");
-                String author = authors.getString(0);
+                String author = "";
+                for (int x = 0; x < authors.length(); x++) {
+                    author += authors.getString(x) + "\n";
+                }
 
                 String desc = volumeInfo.getString("description");
                 String date = volumeInfo.getString("publishedDate");
@@ -137,9 +141,13 @@ public class BookUtils {
                 JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
                 String imageUrl = imageLinks.getString("smallThumbnail");
                 Bitmap image = getBitmapFromUrl(imageUrl);
-                Bitmap resizedImage = getResizedBitmap(image, 160, 80);
+                Bitmap resizedImage = getResizedBitmap(image, 160, 100);
 
-                BooksList booksList = new BooksList(resizedImage, title, author, desc, date);
+                int pageCount = volumeInfo.getInt("pageCount");
+
+                String language = volumeInfo.getString("language");
+
+                BooksList booksList = new BooksList(resizedImage, title, author, desc, date, pageCount, language);
 
                 listOfBooks.add(booksList);
             }
@@ -207,7 +215,13 @@ public class BookUtils {
         return list;
     }
 
-
+    /**
+     * generally size for all books posters
+     * @param bm bitmap image well make some edit on it
+     * @param newHeight the new height of the images
+     * @param newWidth the new width of the images
+     * @return new bitmap image with new height and width
+     */
     private static Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
         int width = bm.getWidth();
         int height = bm.getHeight();

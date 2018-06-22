@@ -3,4 +3,10 @@
     <color name="colorPrimary">#232227</color>
     <color name="colorPrimaryDark">#1B1922</color>
     <color name="colorAccent">#3F3D45</color>
+
+    <color name="main_background">#232B3F</color>
+    <color name="text_color">#ffffff</color>
+    <color name="hint_color">#9FB9F6</color>
+    <color name="white_gray_color">#ADB5C7</color>
+    <color name="book_list_background">#3B3E43</color>
 </resources>
